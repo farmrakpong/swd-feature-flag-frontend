@@ -1,4 +1,4 @@
-import type { FeatureFlagForm } from './feature-flag-form'
+import type { FeatureFlagForm } from '../feature-flag-form'
 
 interface VariationRowProps {
   form: FeatureFlagForm

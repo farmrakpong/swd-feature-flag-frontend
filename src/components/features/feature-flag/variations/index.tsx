@@ -1,8 +1,8 @@
 import VariationRow from './variation-row'
 import type { AnyFieldApi } from '@tanstack/react-form'
-import type { FeatureFlagForm } from './feature-flag-form'
+import type { FeatureFlagForm } from '../feature-flag-form'
 // ชื่อ type ชนกับชื่อ component ในไฟล์นี้ เลยต้อง alias
-import type { Variations as VariationItem } from './types'
+import type { Variations as VariationItem } from '../types'
 
 interface VariationsProps {
   form: FeatureFlagForm

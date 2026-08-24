@@ -6,7 +6,7 @@
 // }
 
 import { GripVertical, Minus, Plus, X } from 'lucide-react'
-import type { FeatureFlagForm } from './feature-flag-form'
+import type { FeatureFlagForm } from '../feature-flag-form'
 
 interface TargetSpecificUsersProps {
   form: FeatureFlagForm
