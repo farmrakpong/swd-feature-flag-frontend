@@ -1,42 +1,45 @@
 import VariationRow from './variation-row'
-import type { Variation } from './types'
-import { useState } from 'react'
+import type { FeatureFlagForm } from './feature-flag-form'
 
 interface VariationsProps {
-  variations: Array<Variation>
+  form: FeatureFlagForm
 }
 
-
-function Variations({ variations }: VariationsProps) {
-  const [listVariations, setListVariations] = useState<Array<Variation>>(variations)
-
-  const addVariationValue = ()=>{
-    // let MaxId= Math.max(...variations.map(item => item.id))
-    // const data = {id:MaxId ,name:'NewName',value:'newValue'}
-    setListVariations((prev)=>{
-       const MaxId =  Math.max(...prev.map(item => item.id))
-       const data = {id:MaxId + 1  ,name:'NewName',value:'newValue'}
-       const lastPrev = [...prev,data]
-       return lastPrev
-    })
-  }
-  const removeVariation = (id:number)=>{
-    setListVariations((prev)=> prev.filter(item => item.id !== id))
-  }
-
+function Variations({ form }: VariationsProps) {
   return (
     <div className="pt-4">
       <p className="text-2xl">Variations</p>
 
-      {/* รายการ variation */}
-      <div className="space-y-2 pt-3">
-        {listVariations.map((item) => (
-          <VariationRow key={item.id} variation={item} onRemove={removeVariation} />
-        ))}
-      </div>
+      {/* mode="array" = บอก form ว่า field นี้เป็น array มี pushValue / removeValue ให้ใช้ */}
+      <form.Field name="variations" mode="array">
+        {(field) => (
+          <>
+            {/* รายการ variation */}
+            <div className="space-y-2 pt-3">
+              {field.state.value.map((item, index) => (
+                <VariationRow
+                  key={item.id}
+                  form={form}
+                  index={index}
+                  onRemove={() => field.removeValue(index)}
+                />
+              ))}
+            </div>
 
-      {/* action: เพิ่ม variation */}
-      <div className="mt-3 size-8 rounded-full bg-gray-300"  onClick={addVariationValue}/>
+            {/* action: เพิ่ม variation */}
+            <div
+              className="mt-3 size-8 rounded-full bg-gray-300"
+              onClick={() => {
+                const list = field.state.value
+                const maxId = list.length
+                  ? Math.max(...list.map((item) => item.id))
+                  : 0
+                field.pushValue({ id: maxId + 1, name: '', value: '' })
+              }}
+            />
+          </>
+        )}
+      </form.Field>
     </div>
   )
 }

@@ -1,14 +1,9 @@
-import { useState } from 'react'
 import Variations from './variations'
-import type { Variation } from './types'
 import TargetSpecificUsers from './target-specific-users'
+import { useFeatureFlagForm } from './feature-flag-form'
 
 function FeatureFlagEditor() {
-  // const form = useForm(...)
-  const [variations, setVariations] = useState<Array<Variation>>([
-    { id: 1, name: 'Variation_1', value: 'true' },
-    { id: 2, name: 'Variation_2', value: 'false' },
-  ])
+  const form = useFeatureFlagForm()
 
   return (
     <div className="grid grid-cols-[2fr_1fr]">
@@ -24,7 +19,7 @@ function FeatureFlagEditor() {
         </div>
 
         {/* Variations */}
-        <Variations variations={variations} />
+        <Variations form={form} />
        <TargetSpecificUsers />
       </div>
       <div>2</div>
