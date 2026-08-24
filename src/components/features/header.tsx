@@ -1,6 +1,6 @@
 interface IHeader {
   title: string
-  subTitle: React.ReactNode | string
+  subTitle?: React.ReactNode | string
 }
 
 function Header({ title, subTitle }: IHeader) {
