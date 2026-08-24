@@ -1,11 +1,20 @@
 import VariationRow from './variation-row'
+import type { AnyFieldApi } from '@tanstack/react-form'
 import type { FeatureFlagForm } from './feature-flag-form'
+// ชื่อ type ชนกับชื่อ component ในไฟล์นี้ เลยต้อง alias
+import type { Variations as VariationItem } from './types'
 
 interface VariationsProps {
   form: FeatureFlagForm
 }
 
 function Variations({ form }: VariationsProps) {
+  
+  const addNewValue = (field:AnyFieldApi)=>{
+                const list: Array<VariationItem> = field.state.value
+                const maxId = list.length ? Math.max(...list.map((item) => item.id)) : 0
+                field.pushValue({ id: maxId + 1, name: '', value: '' })
+  }
   return (
     <div className="pt-4">
       <p className="text-2xl">Variations</p>
@@ -29,13 +38,7 @@ function Variations({ form }: VariationsProps) {
             {/* action: เพิ่ม variation */}
             <div
               className="mt-3 size-8 rounded-full bg-gray-300"
-              onClick={() => {
-                const list = field.state.value
-                const maxId = list.length
-                  ? Math.max(...list.map((item) => item.id))
-                  : 0
-                field.pushValue({ id: maxId + 1, name: '', value: '' })
-              }}
+              onClick={() => addNewValue(field)}
             />
           </>
         )}

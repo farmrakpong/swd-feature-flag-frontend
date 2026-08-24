@@ -1,8 +1,8 @@
 import { useForm } from '@tanstack/react-form'
-import type { Variation } from './types'
+import type { Variations } from './types'
 
 export interface FeatureFlagValues {
-  variations: Array<Variation>
+  variations: Array<Variations>
 }
 
 // ค่าเริ่มต้นของฟอร์มทั้งก้อน (เดิมคือ useState ใน editor)

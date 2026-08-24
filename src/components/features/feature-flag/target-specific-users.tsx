@@ -6,8 +6,13 @@
 // }
 
 import { GripVertical, Minus, Plus, X } from 'lucide-react'
+import type { FeatureFlagForm } from './feature-flag-form'
 
-function TargetSpecificUsers() {
+interface TargetSpecificUsersProps {
+  form: FeatureFlagForm
+}
+
+function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
   return (
     <div className="pt-4">
       <p className="text-2xl">Target specific users</p>
@@ -87,10 +92,20 @@ function TargetSpecificUsers() {
           {/* select: Serve - variation ที่จะคืนเมื่อเงื่อนไขเป็นจริง */}
           <div className="mt-3 flex items-center gap-3">
             <span className="text-sm">Serve</span>
-            <select className="w-56 rounded bg-gray-200 px-3 py-2 text-sm outline-none">
-              <option value="Variation_1">Variation_1</option>
-              <option value="Variation_2">Variation_2</option>
-            </select>
+            {/* Subscribe = ดูเฉพาะ values.variations ถ้าค่าเปลี่ยนเมื่อไหร่ตรงนี้ render ใหม่ */}
+            <form.Subscribe selector={(state) => state.values.variations}>
+              {(variations) => (
+                <select className="w-56 rounded bg-gray-200 px-3 py-2 text-sm outline-none">
+                  {variations
+                    .filter((item) => item.name.trim() !== '')
+                    .map((item) => (
+                      <option key={item.id} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                </select>
+              )}
+            </form.Subscribe>
           </div>
         </div>
 

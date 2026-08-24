@@ -1,4 +1,4 @@
-export interface Variation {
+export interface Variations {
   id: number
   name: string
   value: string
@@ -7,8 +7,8 @@ export interface Variation {
 export interface targeting{
     id:number
     query:string
-    variation:string
-    percentage?:Variation
+    variation:Variations
+    percentage?:Variations
 }
 
 

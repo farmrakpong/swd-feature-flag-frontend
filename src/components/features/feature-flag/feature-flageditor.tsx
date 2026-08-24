@@ -20,7 +20,7 @@ function FeatureFlagEditor() {
 
         {/* Variations */}
         <Variations form={form} />
-       <TargetSpecificUsers />
+       <TargetSpecificUsers form={form} />
       </div>
       <div>2</div>
     </div>
