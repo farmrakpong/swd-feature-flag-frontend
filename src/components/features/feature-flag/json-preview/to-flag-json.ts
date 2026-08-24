@@ -1,23 +1,49 @@
-import type { FeatureFlagValues } from '../feature-flag-form'
+import type { FeatureFlagValues, FlagType } from '../feature-flag-form'
 
-// input คืนค่าเป็น string เสมอ เลยต้องแปลงกลับตามที่ผู้ใช้พิมพ์
-// "true"/"false" -> boolean, "1.5" -> number, นอกนั้นเก็บเป็น string
-export function parseFlagValue(raw: string): boolean | number | string {
+export type FlagValue = boolean | number | string | object
+
+// input คืนค่าเป็น string เสมอ เลยต้องแปลงกลับตาม flag type ที่เลือกไว้
+// คืน undefined = ค่ายังใช้ไม่ได้ ให้ข้ามไม่ต้องใส่ลง JSON
+export function parseFlagValue(
+  raw: string,
+  type: FlagType,
+): FlagValue | undefined {
   const text = raw.trim()
-  if (text === 'true') return true
-  if (text === 'false') return false
-  if (text !== '' && !Number.isNaN(Number(text))) return Number(text)
-  return raw
+
+  switch (type) {
+    case 'boolean':
+      return text === 'true'
+
+    case 'number': {
+      const num = Number(text)
+      return text !== '' && !Number.isNaN(num) ? num : 0
+    }
+
+    case 'json':
+      if (text === '') return {}
+      try {
+        // JSON.parse ทำให้ preview ออกมาเป็น object จริง ไม่ใช่ string ครอบ ""
+        return JSON.parse(text)
+      } catch {
+        // JSON ยังพิมพ์ไม่ครบ / ผิดรูป -> ไม่ต้องโชว์ใน preview
+        return undefined
+      }
+
+    default:
+      return raw
+  }
 }
 
 // แปลงค่าจากฟอร์ม -> โครง JSON ของ GoFeatureFlag
 export function toFlagJson(values: FeatureFlagValues) {
   // ฟอร์มเก็บ variations เป็น array (เพราะต้องมี id ไว้ทำ key)
   // แต่ JSON ใช้ชื่อ variation เป็น key ของ object
-  const variations: Record<string, boolean | number | string> = {}
+  const variations: Record<string, FlagValue> = {}
   for (const item of values.variations) {
     const key = item.name.trim()
-    if (key) variations[key] = parseFlagValue(item.value)
+    const parsed = parseFlagValue(item.value, values.type)
+    // ข้ามแถวที่ยังไม่มีชื่อ หรือค่ายังใช้ไม่ได้
+    if (key && parsed !== undefined) variations[key] = parsed
   }
 
   const flagName = values.name.trim() || 'my-first-flag'

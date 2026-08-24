@@ -27,16 +27,37 @@ function VariationRow({ form, index, onRemove }: VariationRowProps) {
         )}
       </form.Field>
 
-      {/* field: Flag Value */}
+      {/* field: Flag Value - หน้าตาเปลี่ยนตาม flag type ที่เลือกไว้ด้านบน */}
       <form.Field name={`variations[${index}].value`}>
         {(field) => (
-          <input
-            value={field.state.value}
-            onChange={(e) => field.handleChange(e.target.value)}
-            onBlur={field.handleBlur}
-            placeholder="Flag Value"
-            className="rounded bg-gray-200 px-3 py-2 text-sm outline-none"
-          />
+          <form.Subscribe selector={(state) => state.values.type}>
+            {(flagType) =>
+              flagType === 'boolean' ? (
+                // boolean มีได้แค่ 2 ค่า เลยใช้ dropdown ปิดโอกาสพิมพ์ผิด
+                <select
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  className="rounded bg-gray-200 px-3 py-2 text-sm outline-none"
+                >
+                  <option value="true">true</option>
+                  <option value="false">false</option>
+                </select>
+              ) : (
+                <input
+                  // number = คีย์บอร์ดตัวเลข + เบราว์เซอร์กันตัวอักษรให้
+                  type={flagType === 'number' ? 'number' : 'text'}
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  placeholder={
+                    flagType === 'json' ? '{ "key": "value" }' : 'Flag Value'
+                  }
+                  className="rounded bg-gray-200 px-3 py-2 text-sm outline-none"
+                />
+              )
+            }
+          </form.Subscribe>
         )}
       </form.Field>
 

@@ -1,7 +1,12 @@
 import Variations from './variations'
 import TargetSpecificUsers from './targeting'
 import JsonPreview from './json-preview'
-import { useFeatureFlagForm } from './feature-flag-form'
+import {
+  defaultValueForType,
+  flagTypeOptions,
+  useFeatureFlagForm,
+} from './feature-flag-form'
+import type { FlagType } from './feature-flag-form'
 
 function FeatureFlagEditor() {
   const form = useFeatureFlagForm()
@@ -58,7 +63,39 @@ function FeatureFlagEditor() {
             </form.Field>
           </div>
 
-          <div>Flag type</div>
+          {/* field: Flag Type - คุมว่า Flag Value ของทุกแถวกรอกอะไรได้ */}
+          <form.Field name="type">
+            {(field) => (
+              <div className="rounded bg-gray-200 px-3 py-1">
+                <label className="block text-[11px] text-gray-500">
+                  Flag type
+                </label>
+                <select
+                  value={field.state.value}
+                  onChange={(e) => {
+                    const nextType = e.target.value as FlagType
+                    field.handleChange(nextType)
+
+                    // ค่าเก่าใช้กับ type ใหม่ไม่ได้ (เช่น "true" ตอนเปลี่ยนไป json)
+                    // เลยรีเซ็ต Flag Value ทุกแถวให้ตรงกับ type ที่เพิ่งเลือก
+                    form.getFieldValue('variations').forEach((_, i) => {
+                      form.setFieldValue(
+                        `variations[${i}].value`,
+                        defaultValueForType(nextType),
+                      )
+                    })
+                  }}
+                  className="w-full bg-transparent text-sm outline-none"
+                >
+                  {flagTypeOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </form.Field>
           <div>Version</div>
         </div>
 

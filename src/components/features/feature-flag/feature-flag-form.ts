@@ -1,9 +1,34 @@
 import { useForm } from '@tanstack/react-form'
 import type { Variations } from './types'
 
+// ชนิดของค่าที่ flag นี้จะคืน - เป็นตัวกำหนดว่า Flag Value กรอกอะไรได้
+export type FlagType = 'boolean' | 'string' | 'number' | 'json'
+
+export const flagTypeOptions: Array<FlagType> = [
+  'boolean',
+  'string',
+  'number',
+  'json',
+]
+
+// ค่าตั้งต้นของช่อง Flag Value เมื่อสลับ flag type
+export function defaultValueForType(type: FlagType): string {
+  switch (type) {
+    case 'boolean':
+      return 'true'
+    case 'number':
+      return '0'
+    case 'json':
+      return '{}'
+    default:
+      return ''
+  }
+}
+
 export interface FeatureFlagValues {
   // ชื่อ flag = key นอกสุดของ JSON เช่น "my-first-flag"
   name: string
+  type: FlagType
   disable: boolean
   trackEvents: boolean
   variations: Array<Variations>
@@ -12,6 +37,7 @@ export interface FeatureFlagValues {
 // ค่าเริ่มต้นของฟอร์มทั้งก้อน (เดิมคือ useState ใน editor)
 export const defaultFeatureFlagValues: FeatureFlagValues = {
   name: 'my-first-flag',
+  type: 'boolean',
   disable: true,
   trackEvents: false,
   variations: [
