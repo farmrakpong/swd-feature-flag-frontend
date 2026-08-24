@@ -1,5 +1,6 @@
 import Variations from './variations'
 import TargetSpecificUsers from './targeting'
+import JsonPreview from './json-preview'
 import { useFeatureFlagForm } from './feature-flag-form'
 
 function FeatureFlagEditor() {
@@ -65,7 +66,7 @@ function FeatureFlagEditor() {
         <Variations form={form} />
        <TargetSpecificUsers form={form} />
       </div>
-      <div>JSON Preview</div>
+      <JsonPreview form={form} />
     </div>
   )
 }
