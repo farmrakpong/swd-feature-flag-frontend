@@ -1,11 +1,3 @@
-// import VariationRow from './variation-row'
-// import type { Variation } from './types'
-
-// interface VariationsProps {
-//   variations: Array<Variation>
-// }
-
-import { GripVertical, Minus, Plus, X } from 'lucide-react'
 import type { FeatureFlagForm } from '../feature-flag-form'
 
 interface TargetSpecificUsersProps {
@@ -57,7 +49,7 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
 
             {/* 1 row = [drag] [Field] [Operator] [Value] [ปุ่มลบ] */}
             <div className="grid grid-cols-[auto_1fr_1fr_1fr_auto] items-center gap-3 pt-3">
-              <GripVertical className="size-4 text-gray-400" />
+              <i className="fa-solid fa-grip-vertical text-gray-400" />
 
               <input
                 placeholder="Field"
@@ -82,7 +74,7 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
                 type="button"
                 className="grid size-8 place-items-center rounded-full bg-teal-400 text-white"
               >
-                <Minus className="size-4" />
+                <i className="fa-solid fa-minus" />
               </button>
             </div>
 
@@ -114,7 +106,7 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
           type="button"
           className="grid size-8 place-items-center rounded-full bg-teal-400 text-white"
         >
-          <X className="size-4" />
+          <i className="fa-solid fa-xmark" />
         </button>
       </div>
 
@@ -123,7 +115,7 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
         type="button"
         className="mt-3 grid size-8 place-items-center rounded-full bg-teal-400 text-white"
       >
-        <Plus className="size-4" />
+        <i className="fa-solid fa-plus" />
       </button>
     </div>
   )

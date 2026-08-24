@@ -62,7 +62,12 @@ function VariationRow({ form, index, onRemove }: VariationRowProps) {
       </form.Field>
 
       {/* action: ลบ variation แถวนี้ */}
-      <div className="size-8 rounded-full bg-gray-300" onClick={onRemove} />
+      <div
+        className="grid size-8 place-items-center rounded-full bg-teal-400 text-white"
+        onClick={onRemove}
+      >
+        <i className="fa-solid fa-minus" />
+      </div>
     </div>
   )
 }

@@ -9,11 +9,10 @@ interface VariationsProps {
 }
 
 function Variations({ form }: VariationsProps) {
-  
-  const addNewValue = (field:AnyFieldApi)=>{
-                const list: Array<VariationItem> = field.state.value
-                const maxId = list.length ? Math.max(...list.map((item) => item.id)) : 0
-                field.pushValue({ id: maxId + 1, name: '', value: '' })
+  const addNewValue = (field: AnyFieldApi) => {
+    const list: Array<VariationItem> = field.state.value
+    const maxId = list.length ? Math.max(...list.map((item) => item.id)) : 0
+    field.pushValue({ id: maxId + 1, name: '', value: '' })
   }
   return (
     <div className="pt-4">
@@ -37,9 +36,11 @@ function Variations({ form }: VariationsProps) {
 
             {/* action: เพิ่ม variation */}
             <div
-              className="mt-3 size-8 rounded-full bg-gray-300"
+              className="mt-3 grid size-8 place-items-center rounded-full bg-teal-400 text-white"
               onClick={() => addNewValue(field)}
-            />
+            >
+              <i className="fa-solid fa-plus" />
+            </div>
           </>
         )}
       </form.Field>

@@ -29,6 +29,7 @@ export interface FeatureFlagValues {
   // ชื่อ flag = key นอกสุดของ JSON เช่น "my-first-flag"
   name: string
   type: FlagType
+  version: string
   disable: boolean
   trackEvents: boolean
   variations: Array<Variations>
@@ -38,6 +39,7 @@ export interface FeatureFlagValues {
 export const defaultFeatureFlagValues: FeatureFlagValues = {
   name: 'my-first-flag',
   type: 'boolean',
+  version: '1',
   disable: true,
   trackEvents: false,
   variations: [

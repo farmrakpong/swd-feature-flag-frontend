@@ -52,7 +52,8 @@ export function toFlagJson(values: FeatureFlagValues) {
     [flagName]: {
       variations,
       ...(values.disable ? { disable: true } : {}),
-      ...(values.trackEvents ? { trackEvents: false } : {}),
+      ...(values.trackEvents ? { trackEvents: true } : {}),
+      ...(values.version.trim() ? { version: values.version.trim() } : {}),
       // TODO: ต่อกับฟอร์ม targeting เมื่อขึ้นโครง rule เสร็จ
       targeting: [],
       defaultRule: {

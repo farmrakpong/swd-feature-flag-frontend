@@ -3,6 +3,7 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @import '@fontsource-variable/geist';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
 
 @custom-variant dark (&:is(.dark *));
 @plugin "@tailwindcss/typography";
