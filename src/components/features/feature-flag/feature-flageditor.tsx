@@ -2,6 +2,7 @@ import FlagInfo from './flag-info'
 import Variations from './variations'
 import TargetSpecificUsers from './targeting'
 import DefaultRule from './default-rule'
+import Metadata from './metadata'
 import JsonPreview from './json-preview'
 import { useFeatureFlagForm } from './feature-flag-form'
 
@@ -22,6 +23,9 @@ function FeatureFlagEditor() {
 
         {/* DefaultRule */}
         <DefaultRule form={form} />
+
+        {/* Metadata */}
+        <Metadata form={form} />
 
       </div>
       {/* JsonPreview */}

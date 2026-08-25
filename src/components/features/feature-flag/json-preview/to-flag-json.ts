@@ -49,6 +49,15 @@ export function toFlagJson(values: FeatureFlagValues) {
 
   const flagName = values.name.trim() || 'my-first-flag'
 
+  const metadataEntries = values.metadata.filter(
+    (item) => item.key.trim() !== '',
+  )
+  const metadata = metadataEntries.length
+    ? Object.fromEntries(
+        metadataEntries.map((item) => [item.key.trim(), item.value]),
+      )
+    : undefined
+
   return {
     [flagName]: {
       variations,
@@ -70,6 +79,9 @@ export function toFlagJson(values: FeatureFlagValues) {
      defaultRule: {
         variation: values.defaultRule.variation,
       },
+      // array ของฟอร์ม -> object โดยใช้ key ที่กรอกเป็นชื่อ property
+      // ไม่มีแถว หรือยังไม่ได้ใส่ key เลย ก็ไม่ต้องมี key นี้ใน JSON
+      ...(metadata !== undefined ? { metadata } : {}),
     },
   }
 }

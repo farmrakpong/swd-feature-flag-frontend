@@ -18,6 +18,14 @@ export interface Targeting{
     percentage?:Variations
 }
 
+// JSON ออกมาเป็น "metadata": { "key": "value" }
+// ฟอร์มเก็บเป็น array เพราะต้องมี id ไว้ทำ key ตอน map / ลบแถว
+export interface Metadata{
+    id: number
+    key: string
+    value: string
+}
+
 // JSON ออกมาเป็น "defaultRule": { "variation": "Variation_1" }
 export interface DefaultRule{
     variation: string

@@ -49,16 +49,6 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
 
           )}
           </form.Field>
-      {/* 1 rule = การ์ด 1 ใบ + ปุ่มลบ rule อยู่นอกการ์ดด้านขวา */}
-      
-
-      {/* action: เพิ่ม rule */}
-      <button
-        type="button"
-        className="mt-3 grid size-8 place-items-center rounded-full bg-teal-400 text-white"
-      >
-        <i className="fa-solid fa-plus" />
-      </button>
     </div>
   )
 }
