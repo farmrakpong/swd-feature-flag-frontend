@@ -6,21 +6,38 @@ export interface Variations {
   value: string
 }
 
+export type Logic = 'AND' | 'OR'
+
 // 1 บรรทัดเงื่อนไข = [Field] [Operator] [Value]
 export interface Condition{
+    kind:'condition'
     id:number
     field:string
     operator:Operator
     value:string
 }
 
-// 1 rule = หลายเงื่อนไขต่อกันด้วย and/or + variation ที่จะ serve
+// กลุ่มเงื่อนไข = วงเล็บใน query ข้างในมีได้ทั้งเงื่อนไขและกลุ่มซ้อนกลุ่ม
+// children ประกาศเป็น unknown เพราะถ้าให้ชี้กลับมาที่ RuleNode ตรงๆ
+// TypeScript จะไล่ type ซ้อนไม่รู้จบจนพัง (DeepKeys ของ TanStack Form ระเบิด)
+// เวลาใช้งานจริงค่อย cast กลับเป็น Array<RuleNode>
+export interface Group{
+    kind:'group'
+    id:number
+    logic:Logic
+    children:Array<unknown>
+}
+
+// เช็ค node.kind แล้ว TypeScript จะรู้เองว่าเป็นตัวไหน
+export type RuleNode = Condition | Group
+
+// 1 rule = หลาย node ต่อกันด้วย and/or + variation ที่จะ serve
 // ตัว query string จะถูกประกอบตอนแปลงเป็น JSON ไม่ได้เก็บซ้ำในฟอร์ม
 export interface Targeting{
     id:number
     name:string
-    logic:'AND' | 'OR'
-    conditions:Array<Condition>
+    logic:Logic
+    conditions:Array<RuleNode>
     variation?:Variations
     percentage?:Variations
 }

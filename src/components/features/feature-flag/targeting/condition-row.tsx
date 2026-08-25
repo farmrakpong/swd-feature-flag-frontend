@@ -1,14 +1,12 @@
 import FieldError from '../field-error'
 import { operatorOptions } from './operator'
-import type { Operator } from './operator'
+import { dynamicField } from './dynamic-field'
 import type { FeatureFlagForm } from '../feature-flag-form'
 
 interface ConditionRowProps {
   form: FeatureFlagForm
-  // ตำแหน่งของ rule ใน targeting
-  ruleIndex: number
-  // ตำแหน่งของเงื่อนไขใน rule นั้น
-  index: number
+  // path เต็มของเงื่อนไขนี้ เช่น targeting[0].conditions[1]
+  path: string
   onRemove: () => void
 }
 
@@ -17,8 +15,8 @@ const fieldLabel = 'block text-[11px] text-gray-500'
 const fieldControl = 'w-full bg-transparent text-sm outline-none'
 
 // 1 row = [drag] [Field] [Operator] [Value] [ปุ่มลบ]
-function ConditionRow({ form, ruleIndex, index, onRemove }: ConditionRowProps) {
-  const path = `targeting[${ruleIndex}].conditions[${index}]` as const
+function ConditionRow({ form, path, onRemove }: ConditionRowProps) {
+  const Field = dynamicField(form)
 
   return (
     <div className="grid grid-cols-[auto_1fr_1fr_1fr_auto] items-center gap-3">
@@ -26,7 +24,7 @@ function ConditionRow({ form, ruleIndex, index, onRemove }: ConditionRowProps) {
       <i className="fa-solid fa-grip-vertical text-gray-400" />
 
       {/* ช่องซ้าย: ชื่อ field ที่จะเอามาเทียบ */}
-      <form.Field name={`${path}.field`}>
+      <Field name={`${path}.field`}>
         {(field) => (
           <div>
             <div className={fieldBox}>
@@ -41,14 +39,14 @@ function ConditionRow({ form, ruleIndex, index, onRemove }: ConditionRowProps) {
             <FieldError field={field} />
           </div>
         )}
-      </form.Field>
+      </Field>
 
       {/* ช่องกลาง: ตัวเปรียบเทียบ (eq, ne, ge, ...) */}
-      <form.Field name={`${path}.operator`}>
+      <Field name={`${path}.operator`}>
         {(field) => (
           <select
             value={field.state.value}
-            onChange={(e) => field.handleChange(e.target.value as Operator)}
+            onChange={(e) => field.handleChange(e.target.value)}
             className={`${fieldBox} ${fieldControl} cursor-pointer`}
           >
             {operatorOptions.map((option) => (
@@ -58,10 +56,10 @@ function ConditionRow({ form, ruleIndex, index, onRemove }: ConditionRowProps) {
             ))}
           </select>
         )}
-      </form.Field>
+      </Field>
 
       {/* ช่องขวา: ค่าที่เอาไปเทียบ */}
-      <form.Field name={`${path}.value`}>
+      <Field name={`${path}.value`}>
         {(field) => (
           <div>
             <div className={fieldBox}>
@@ -76,9 +74,9 @@ function ConditionRow({ form, ruleIndex, index, onRemove }: ConditionRowProps) {
             <FieldError field={field} />
           </div>
         )}
-      </form.Field>
+      </Field>
 
-      {/* ลบเฉพาะแถวนี้ ไม่ใช่ลบทั้ง rule */}
+      {/* ลบเฉพาะแถวนี้ */}
       <button
         type="button"
         onClick={onRemove}

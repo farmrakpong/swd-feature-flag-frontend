@@ -22,7 +22,9 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
           name: `Rule ${maxId + 1}`,
           logic: 'AND',
           // rule ใหม่เริ่มด้วยเงื่อนไขเปล่า 1 บรรทัด
-          conditions: [{ id: 1, field: '', operator: 'EQUALS', value: '' }],
+          conditions: [
+            { kind: 'condition', id: 1, field: '', operator: 'EQUALS', value: '' },
+          ],
         })
         // console.log(field.state.value);
         

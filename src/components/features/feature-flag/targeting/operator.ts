@@ -1,4 +1,4 @@
-import type { Condition } from '../types'
+import type { Condition, Logic, RuleNode } from '../types'
 export type Operator =
   | 'EQUALS'
   | 'NOT_EQUALS'
@@ -97,13 +97,23 @@ function conditionToText(condition: Condition): string {
   return `${left} ${operatorToken[condition.operator]} ${right}`
 }
 
-// ต่อทุกเงื่อนไขใน rule เดียวกันด้วย and/or -> "f eq 5 and a eq 5"
-export function buildQuery(
-  conditions: Array<Condition>,
-  logic: 'AND' | 'OR',
-): string {
-  return conditions
-    .map(conditionToText)
+// กลุ่มจะเรียกตัวเองซ้ำลงไปเรื่อยๆ ตามชั้นที่ซ้อนกัน แล้วครอบวงเล็บ
+function nodeToText(node: RuleNode): string {
+  if (node.kind === 'condition') return conditionToText(node)
+
+  const inner = joinNodes(node.children as Array<RuleNode>, node.logic)
+  return inner === '' ? '' : `(${inner})`
+}
+
+// ต่อ node ในชั้นเดียวกันด้วย and/or และข้ามตัวที่ยังว่าง
+function joinNodes(nodes: Array<RuleNode>, logic: Logic): string {
+  return nodes
+    .map(nodeToText)
     .filter((text) => text !== '')
     .join(` ${logic.toLowerCase()} `)
+}
+
+// "f eq 5 and a eq 5 and (u eq 8 and i eq 7)"
+export function buildQuery(nodes: Array<RuleNode>, logic: Logic): string {
+  return joinNodes(nodes, logic)
 }

@@ -15,17 +15,29 @@ const variationSchema = z.object({
 })
 
 const conditionSchema = z.object({
+  kind: z.literal('condition'),
   id: z.number(),
   field: z.string().trim().min(1, 'ต้องระบุ field'),
   operator: z.enum(operatorValues),
   value: z.string().trim().min(1, 'ต้องระบุค่าที่จะเทียบ'),
 })
 
+// กลุ่มซ้อนกันได้ไม่จำกัดชั้น เลยเช็คแค่เปลือกนอก
+// ข้างในปล่อยผ่านเพราะ zod ไล่ type ซ้อนตัวเองแล้วชนกับ type ของฟอร์ม
+const groupSchema = z.object({
+  kind: z.literal('group'),
+  id: z.number(),
+  logic: z.enum(['AND', 'OR']),
+  children: z.array(z.unknown()),
+})
+
 const targetingSchema = z.object({
   id: z.number(),
   name: z.string().trim().min(1, 'ต้องมีชื่อ rule'),
   logic: z.enum(['AND', 'OR']),
-  conditions: z.array(conditionSchema).min(1, 'ต้องมีอย่างน้อย 1 เงื่อนไข'),
+  conditions: z
+    .array(z.union([conditionSchema, groupSchema]))
+    .min(1, 'ต้องมีอย่างน้อย 1 เงื่อนไข'),
   variation: variationSchema.optional(),
   percentage: variationSchema.optional(),
 })
