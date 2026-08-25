@@ -16,12 +16,12 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
         const firstVariation = form.getFieldValue('variations')[0]
 
         field.pushValue({
+          variation: firstVariation,
           id: maxId + 1,
           name: `Rule ${maxId + 1}`,
           query: '',
-          variation: firstVariation,
         })
-        console.log(field);
+        // console.log(field.state.value);
         
   }
   return (
@@ -29,9 +29,15 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
       <p className="text-2xl">Target specific users</p>
          <form.Field name="targeting" mode="array">
           {(field) => ( 
-                    <div className="mt-3 grid size-8 place-items-center rounded-full bg-teal-400 text-white" onClick={()=>addTargetSpecificUsersValue(field)}>
-                      <i className="fa-solid fa-plus" />
-                    </div> 
+            <>
+                {field.state.value.map((rule) => (
+                   <div key={rule.id}>{rule.name}</div>
+                ))}
+                <div className="mt-3 grid size-8 place-items-center rounded-full bg-teal-400 text-white" onClick={()=>addTargetSpecificUsersValue(field)}>
+                  <i className="fa-solid fa-plus" />
+                </div> 
+
+                 </>
 
           )}
           </form.Field>
