@@ -1,6 +1,7 @@
 import FlagInfo from './flag-info'
 import Variations from './variations'
 import TargetSpecificUsers from './targeting'
+import DefaultRule from './default-rule'
 import JsonPreview from './json-preview'
 import { useFeatureFlagForm } from './feature-flag-form'
 
@@ -18,6 +19,9 @@ function FeatureFlagEditor() {
 
         {/* TargetSpecificUsers  */}
         <TargetSpecificUsers form={form} />
+
+        {/* DefaultRule */}
+        <DefaultRule form={form} />
 
       </div>
       {/* JsonPreview */}

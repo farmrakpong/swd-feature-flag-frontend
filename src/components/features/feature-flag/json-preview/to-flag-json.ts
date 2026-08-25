@@ -1,4 +1,5 @@
 import type { FeatureFlagValues, FlagType } from '../feature-flag-form'
+import { buildQuery } from '../targeting/operator'
 
 export type FlagValue = boolean | number | string | object
 
@@ -54,19 +55,20 @@ export function toFlagJson(values: FeatureFlagValues) {
       ...(values.disable ? { disable: true } : {}),
       ...(values.trackEvents ? { trackEvents: true } : {}),
       ...(values.version.trim() ? { version: values.version.trim() } : {}),
-      // ไม่มี rule เลยก็ไม่ต้องมี key นี้ใน JSON
+       // ไม่มี rule เลยก็ไม่ต้องมี key นี้ใน JSON
       // ฟอร์มเก็บ variation เป็น object ทั้งก้อน แต่ JSON ใช้แค่ "ชื่อ"
       ...(values.targeting.length
         ? {
             targeting: values.targeting.map((rule) => ({
               name: rule.name,
-              query: rule.query,
+              // query ไม่ได้เก็บในฟอร์ม แต่ประกอบจาก field/operator/value
+              query: buildQuery(rule.field, rule.operator, rule.value),
               ...(rule.variation ? { variation: rule.variation.name } : {}),
             })),
           }
         : {}),
-      defaultRule: {
-        variation: values.variations[0]?.name ?? '',
+     defaultRule: {
+        variation: values.defaultRule.variation,
       },
     },
   }

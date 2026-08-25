@@ -1,6 +1,7 @@
 import type { AnyFieldApi } from '@tanstack/react-form'
 import type { FeatureFlagForm } from '../feature-flag-form'
 import type { Targeting } from '../types'
+import RuleCard from './rule-card'
 
 interface TargetSpecificUsersProps {
   form: FeatureFlagForm
@@ -19,7 +20,9 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
           variation: firstVariation,
           id: maxId + 1,
           name: `Rule ${maxId + 1}`,
-          query: '',
+          field: '',
+          operator: 'EQUALS',
+          value: '',
         })
         // console.log(field.state.value);
         
@@ -30,8 +33,13 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
          <form.Field name="targeting" mode="array">
           {(field) => ( 
             <>
-                {field.state.value.map((rule) => (
-                   <div key={rule.id}>{rule.name}</div>
+                {field.state.value.map((rule, index) => (
+                   <RuleCard
+                     key={rule.id}
+                     form={form}
+                     index={index}
+                     onRemove={() => field.removeValue(index)}
+                   />
                 ))}
                 <div className="mt-3 grid size-8 place-items-center rounded-full bg-teal-400 text-white" onClick={()=>addTargetSpecificUsersValue(field)}>
                   <i className="fa-solid fa-plus" />

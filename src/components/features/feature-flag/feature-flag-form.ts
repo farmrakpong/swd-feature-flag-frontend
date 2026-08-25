@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form'
-import type { Variations,Targeting } from './types'
+import type { Variations,Targeting,DefaultRule } from './types'
 
 // ชนิดของค่าที่ flag นี้จะคืน - เป็นตัวกำหนดว่า Flag Value กรอกอะไรได้
 export type FlagType = 'boolean' | 'string' | 'number' | 'json'
@@ -34,6 +34,7 @@ export interface FeatureFlagValues {
   trackEvents: boolean
   variations: Array<Variations>
   targeting:Array<Targeting>
+  defaultRule:DefaultRule
 }
 
 // ค่าเริ่มต้นของฟอร์มทั้งก้อน 
@@ -47,7 +48,8 @@ export const defaultFeatureFlagValues: FeatureFlagValues = {
     { id: 1, name: 'Variation_1', value: 'true' },
     { id: 2, name: 'Variation_2', value: 'false' },
   ],
-  targeting:[]
+  targeting:[],
+  defaultRule:{ variation: 'Variation_1' }
 }
 
 export function useFeatureFlagForm() {

@@ -69,3 +69,32 @@ export const operatorOptions: OperatorOption[] = [
     value: 'NOT',
   },
 ]
+
+// ตัวย่อที่ GoFeatureFlag ใช้ใน query string เช่น "1 ne 1"
+export const operatorToken: Record<Operator, string> = {
+  EQUALS: 'eq',
+  NOT_EQUALS: 'ne',
+  LESS_THAN: 'lt',
+  GREATER_THAN: 'gt',
+  LESS_THAN_EQUAL: 'le',
+  GREATER_THAN_EQUAL: 'ge',
+  CONTAINS: 'co',
+  STARTS_WITH: 'sw',
+  ENDS_WITH: 'ew',
+  IN_LIST: 'in',
+  PRESENT: 'pr',
+  NOT: 'not',
+}
+
+// ประกอบ 3 ช่องในแถวเงื่อนไขเป็น query string
+export function buildQuery(
+  field: string,
+  operator: Operator,
+  value: string,
+): string {
+  const left = field.trim()
+  const right = value.trim()
+  if (left === '' || right === '') return ''
+
+  return `${left} ${operatorToken[operator]} ${right}`
+}
