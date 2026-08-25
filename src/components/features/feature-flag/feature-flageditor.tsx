@@ -17,7 +17,7 @@ function FeatureFlagEditor() {
   return (
     <div className="grid grid-cols-[2fr_1fr]">
       <div className="min-h-screen bg-gray-50 p-6">
-        {/* ฟอร์มถือหลาย flag ได้ แต่ละตัวเป็น editor เต็มชุดของตัวเอง */}
+        {/* flags ใหญ่สุดนอกสุด */}
         <form.Field name="flags" mode="array">
           {(field) => (
             <>

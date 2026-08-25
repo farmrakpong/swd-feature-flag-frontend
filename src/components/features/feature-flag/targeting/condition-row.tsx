@@ -57,7 +57,8 @@ function ConditionRow({ form, path, onRemove, drag }: ConditionRowProps) {
           <select
             value={field.state.value}
             onChange={(e) => field.handleChange(e.target.value)}
-            className={`${fieldBox} ${fieldControl} cursor-pointer`}
+            // อย่าใส่ fieldControl ตรงนี้ มันมี bg-transparent จะไปทับจนพื้นหลังหาย
+            className={`${fieldBox} w-full cursor-pointer text-sm outline-none`}
           >
             {operatorOptions.map((option) => (
               <option key={option.value} value={option.value}>
