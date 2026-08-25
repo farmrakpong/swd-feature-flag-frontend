@@ -4,10 +4,10 @@ export interface Variations {
   value: string
 }
 
-export interface targeting{
+export interface Targeting{
     id:number
     query:string
-    variation:Variations
+    variation?:Variations
     percentage?:Variations
 }
 
