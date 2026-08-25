@@ -6,14 +6,21 @@ export interface Variations {
   value: string
 }
 
-// 1 rule = 1 เงื่อนไข (field/operator/value) + variation ที่จะ serve
+// 1 บรรทัดเงื่อนไข = [Field] [Operator] [Value]
+export interface Condition{
+    id:number
+    field:string
+    operator:Operator
+    value:string
+}
+
+// 1 rule = หลายเงื่อนไขต่อกันด้วย and/or + variation ที่จะ serve
 // ตัว query string จะถูกประกอบตอนแปลงเป็น JSON ไม่ได้เก็บซ้ำในฟอร์ม
 export interface Targeting{
     id:number
     name:string
-    field:string
-    operator:Operator
-    value:string
+    logic:'AND' | 'OR'
+    conditions:Array<Condition>
     variation?:Variations
     percentage?:Variations
 }

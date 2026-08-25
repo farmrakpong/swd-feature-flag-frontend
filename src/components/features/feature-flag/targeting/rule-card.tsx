@@ -1,6 +1,8 @@
-import { operatorOptions } from './operator'
-import type { Operator } from './operator'
+import ConditionRow from './condition-row'
+import FieldError from '../field-error'
+import type { AnyFieldApi } from '@tanstack/react-form'
 import type { FeatureFlagForm } from '../feature-flag-form'
+import type { Condition } from '../types'
 
 interface RuleCardProps {
   form: FeatureFlagForm
@@ -11,10 +13,16 @@ interface RuleCardProps {
 
 const fieldBox = 'rounded-md bg-gray-200 px-3 pt-1.5 pb-2'
 const fieldLabel = 'block text-[11px] text-gray-500'
-const fieldControl = 'w-full bg-transparent text-sm outline-none'
 
 // 1 การ์ด = [Rule name] + [กล่องเงื่อนไข] + [Serve] และปุ่มลบอยู่นอกการ์ดด้านขวา
 function RuleCard({ form, index, onRemove }: RuleCardProps) {
+  // ปุ่ม +Rule = เพิ่มอีก 1 บรรทัดเงื่อนไขในกฎเดียวกัน
+  const addCondition = (field: AnyFieldApi) => {
+    const list: Array<Condition> = field.state.value
+    const maxId = list.length ? Math.max(...list.map((item) => item.id)) : 0
+    field.pushValue({ id: maxId + 1, field: '', operator: 'EQUALS', value: '' })
+  }
+
   return (
     <div className="flex items-start gap-3 pt-3">
       <div className="flex-1 rounded-md border border-teal-400 p-4">
@@ -30,88 +38,66 @@ function RuleCard({ form, index, onRemove }: RuleCardProps) {
                 placeholder={`Rule ${index + 1}`}
                 className="w-full bg-transparent text-xl outline-none"
               />
+              <FieldError field={field} />
             </div>
           )}
         </form.Field>
 
-        {/* กล่องเงื่อนไข - ตอนนี้เป็น UI ล้วน ยังไม่ผูกกับ form */}
+        {/* กล่องเงื่อนไขของ rule นี้ */}
         <div className="mt-3 rounded-md border border-gray-300 p-3">
-          <div className="flex items-center gap-2">
-            {/* select: AND / OR */}
-            <select className={`${fieldBox} w-32 cursor-pointer py-2 text-sm`}>
-              <option value="AND">AND</option>
-              <option value="OR">OR</option>
-            </select>
+          <form.Field name={`targeting[${index}].conditions`} mode="array">
+            {(conditionsField) => (
+              <>
+                <div className="flex items-center gap-2">
+                  {/* ตัวเชื่อมระหว่างเงื่อนไข -> " and " / " or " ใน query */}
+                  <form.Field name={`targeting[${index}].logic`}>
+                    {(field) => (
+                      <select
+                        value={field.state.value}
+                        onChange={(e) =>
+                          field.handleChange(e.target.value as 'AND' | 'OR')
+                        }
+                        className={`${fieldBox} w-32 cursor-pointer py-2 text-sm`}
+                      >
+                        <option value="AND">AND</option>
+                        <option value="OR">OR</option>
+                      </select>
+                    )}
+                  </form.Field>
 
-            {/* action: เพิ่มเงื่อนไขระดับเดียวกัน */}
-            <button type="button" className="rounded bg-gray-300 px-3 py-2 text-sm">
-              +Rule
-            </button>
+                  {/* action: เพิ่มเงื่อนไขระดับเดียวกัน */}
+                  <button
+                    type="button"
+                    onClick={() => addCondition(conditionsField)}
+                    className="rounded bg-gray-300 px-3 py-2 text-sm"
+                  >
+                    +Rule
+                  </button>
 
-            {/* action: เพิ่มกลุ่มเงื่อนไขซ้อนข้างใน (recursive) */}
-            <button type="button" className="rounded bg-gray-300 px-3 py-2 text-sm">
-              +Group
-            </button>
-          </div>
+                  {/* action: เพิ่มกลุ่มเงื่อนไขซ้อนข้างใน (recursive) - ยังไม่ได้ต่อ */}
+                  <button
+                    type="button"
+                    className="rounded bg-gray-300 px-3 py-2 text-sm"
+                  >
+                    +Group
+                  </button>
+                </div>
 
-          {/* 1 row = [drag] [Field] [Operator] [Value] [ปุ่มลบ] */}
-          <div className="mt-3 grid grid-cols-[auto_1fr_1fr_1fr_auto] items-center gap-3">
-            {/* จุดจับลาก */}
-            <i className="fa-solid fa-grip-vertical text-gray-400" />
-
-            {/* ช่องซ้าย: ชื่อ field ที่จะเอามาเทียบ */}
-            <form.Field name={`targeting[${index}].field`}>
-              {(field) => (
-                <input
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  placeholder="Field"
-                  className={`${fieldBox} ${fieldControl}`}
-                />
-              )}
-            </form.Field>
-
-            {/* ช่องกลาง: ตัวเปรียบเทียบ (eq, ne, ge, ...) */}
-            <form.Field name={`targeting[${index}].operator`}>
-              {(field) => (
-                <select
-                  value={field.state.value}
-                  onChange={(e) =>
-                    field.handleChange(e.target.value as Operator)
-                  }
-                  className={`${fieldBox} ${fieldControl} cursor-pointer`}
-                >
-                  {operatorOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
+                {/* รายการเงื่อนไขของ rule นี้ */}
+                <div className="mt-3 space-y-3">
+                  {conditionsField.state.value.map((condition, conditionIndex) => (
+                    <ConditionRow
+                      key={condition.id}
+                      form={form}
+                      ruleIndex={index}
+                      index={conditionIndex}
+                      onRemove={() => conditionsField.removeValue(conditionIndex)}
+                    />
                   ))}
-                </select>
-              )}
-            </form.Field>
-
-            {/* ช่องขวา: ค่าที่เอาไปเทียบ -> รวม 3 ช่องได้ query "1 ne 1" */}
-            <form.Field name={`targeting[${index}].value`}>
-              {(field) => (
-                <input
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  placeholder="Value"
-                  className={`${fieldBox} ${fieldControl}`}
-                />
-              )}
-            </form.Field>
-
-            {/* ลบเฉพาะแถวเงื่อนไขนี้ (ไม่ใช่ลบทั้ง rule) - ยังไม่ได้ต่อ */}
-            <button
-              type="button"
-              className="grid size-8 place-items-center rounded-full bg-teal-400 text-white"
-            >
-              <i className="fa-solid fa-minus" />
-            </button>
-          </div>
+                </div>
+              </>
+            )}
+          </form.Field>
         </div>
 
         {/* field: Serve - variation ที่จะคืนเมื่อเงื่อนไขเป็นจริง */}

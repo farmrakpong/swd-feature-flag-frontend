@@ -1,3 +1,4 @@
+import type { Condition } from '../types'
 export type Operator =
   | 'EQUALS'
   | 'NOT_EQUALS'
@@ -86,15 +87,23 @@ export const operatorToken: Record<Operator, string> = {
   NOT: 'not',
 }
 
-// ประกอบ 3 ช่องในแถวเงื่อนไขเป็น query string
-export function buildQuery(
-  field: string,
-  operator: Operator,
-  value: string,
-): string {
-  const left = field.trim()
-  const right = value.trim()
+// ประกอบ 3 ช่องในแถวเงื่อนไขเป็นข้อความเดียว เช่น "f eq 5"
+// ยังกรอกไม่ครบ = คืนค่าว่าง ไม่ต้องเดาให้
+function conditionToText(condition: Condition): string {
+  const left = condition.field.trim()
+  const right = condition.value.trim()
   if (left === '' || right === '') return ''
 
-  return `${left} ${operatorToken[operator]} ${right}`
+  return `${left} ${operatorToken[condition.operator]} ${right}`
+}
+
+// ต่อทุกเงื่อนไขใน rule เดียวกันด้วย and/or -> "f eq 5 and a eq 5"
+export function buildQuery(
+  conditions: Array<Condition>,
+  logic: 'AND' | 'OR',
+): string {
+  return conditions
+    .map(conditionToText)
+    .filter((text) => text !== '')
+    .join(` ${logic.toLowerCase()} `)
 }

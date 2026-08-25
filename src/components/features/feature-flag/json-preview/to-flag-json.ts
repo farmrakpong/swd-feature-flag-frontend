@@ -70,8 +70,8 @@ export function toFlagJson(values: FeatureFlagValues) {
         ? {
             targeting: values.targeting.map((rule) => ({
               name: rule.name,
-              // query ไม่ได้เก็บในฟอร์ม แต่ประกอบจาก field/operator/value
-              query: buildQuery(rule.field, rule.operator, rule.value),
+              // query ไม่ได้เก็บในฟอร์ม แต่ประกอบจากทุกเงื่อนไขต่อด้วย and/or
+              query: buildQuery(rule.conditions, rule.logic),
               ...(rule.variation ? { variation: rule.variation.name } : {}),
             })),
           }
