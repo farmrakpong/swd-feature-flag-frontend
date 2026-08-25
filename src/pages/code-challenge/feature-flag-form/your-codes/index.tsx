@@ -1,3 +1,4 @@
+import FeatureFlagEditor from '#/components/features/feature-flag/feature-flageditor'
 import Header from '#/components/features/header'
 
 function YourCode() {
@@ -5,8 +6,8 @@ function YourCode() {
     <section>
       <Header
         title="Create Your Code Here"
-        subTitle="คุณสามารถเขียนโค้ดของคุณได้ที่นี่และลบโค๊ดตัวอย่างทิ้งได้เลย"
       />
+      <FeatureFlagEditor ></FeatureFlagEditor>
     </section>
   )
 }
