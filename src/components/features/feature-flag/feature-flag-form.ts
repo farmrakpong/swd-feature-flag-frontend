@@ -50,7 +50,7 @@ export const defaultFeatureFlagValues: FeatureFlagValues = {
     { id: 2, name: 'Variation_2', value: 'false' },
   ],
   targeting:[],
-  defaultRule:{ variation: 'Variation_1' },
+  defaultRule:{ kind: 'variation', variation: 'Variation_1', percentage: {} },
   metadata:[]
 }
 

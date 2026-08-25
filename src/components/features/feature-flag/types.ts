@@ -26,7 +26,12 @@ export interface Metadata{
     value: string
 }
 
-// JSON ออกมาเป็น "defaultRule": { "variation": "Variation_1" }
+// serve ได้ 2 แบบ เลือกอย่างใดอย่างหนึ่ง
+// variation  -> "defaultRule": { "variation": "Variation_1" }
+// percentage -> "defaultRule": { "percentage": { "Variation_1": 1, "Variation_2": 0 } }
 export interface DefaultRule{
+    kind: 'variation' | 'percentage'
     variation: string
+    // key = ชื่อ variation, value = เปอร์เซ็นต์
+    percentage: Record<string, number>
 }

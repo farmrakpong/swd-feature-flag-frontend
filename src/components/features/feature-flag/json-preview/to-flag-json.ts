@@ -76,9 +76,20 @@ export function toFlagJson(values: FeatureFlagValues) {
             })),
           }
         : {}),
-     defaultRule: {
-        variation: values.defaultRule.variation,
-      },
+     defaultRule:
+        values.defaultRule.kind === 'percentage'
+          ? // ไล่ตาม variation ที่มีอยู่จริง ตัวไหนยังไม่กรอกนับเป็น 0
+            {
+              percentage: Object.fromEntries(
+                values.variations
+                  .filter((item) => item.name.trim() !== '')
+                  .map((item) => [
+                    item.name.trim(),
+                    values.defaultRule.percentage[item.name] ?? 0,
+                  ]),
+              ),
+            }
+          : { variation: values.defaultRule.variation },
       // array ของฟอร์ม -> object โดยใช้ key ที่กรอกเป็นชื่อ property
       // ไม่มีแถว หรือยังไม่ได้ใส่ key เลย ก็ไม่ต้องมี key นี้ใน JSON
       ...(metadata !== undefined ? { metadata } : {}),
