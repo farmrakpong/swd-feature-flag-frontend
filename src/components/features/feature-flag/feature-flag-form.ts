@@ -1,4 +1,5 @@
 import { useForm } from '@tanstack/react-form'
+import { featureFlagSchema } from './feature-flag-schema'
 import type { Variations,Targeting,DefaultRule,Metadata } from './types'
 
 // ชนิดของค่าที่ flag นี้จะคืน - เป็นตัวกำหนดว่า Flag Value กรอกอะไรได้
@@ -57,6 +58,10 @@ export const defaultFeatureFlagValues: FeatureFlagValues = {
 export function useFeatureFlagForm() {
   return useForm({
     defaultValues: defaultFeatureFlagValues,
+    // เช็คทุกครั้งที่ค่าเปลี่ยน error จะเด้งใต้ช่องที่ผิดทันที
+    validators: {
+      onChange: featureFlagSchema,
+    },
   })
 }
 

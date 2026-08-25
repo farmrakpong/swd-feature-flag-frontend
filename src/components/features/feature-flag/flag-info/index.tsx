@@ -1,4 +1,5 @@
 import ToggleField from './toggle-field'
+import FieldError from '../field-error'
 import { defaultValueForType, flagTypeOptions } from '../feature-flag-form'
 import type { FeatureFlagForm, FlagType } from '../feature-flag-form'
 
@@ -18,15 +19,18 @@ function FlagInfo({ form }: FlagInfoProps) {
       {/* field: Flag Name = key นอกสุดของ JSON */}
       <form.Field name="name">
         {(field) => (
-          <div className={fieldBox}>
-            <label className={fieldLabel}>Flag Name</label>
-            <input
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              onBlur={field.handleBlur}
-              placeholder="my-first-flag"
-              className={fieldControl}
-            />
+          <div>
+            <div className={fieldBox}>
+              <label className={fieldLabel}>Flag Name</label>
+              <input
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                placeholder="my-first-flag"
+                className={fieldControl}
+              />
+            </div>
+            <FieldError field={field} />
           </div>
         )}
       </form.Field>

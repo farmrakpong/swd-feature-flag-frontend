@@ -1,3 +1,4 @@
+import FieldError from '../field-error'
 import type { FeatureFlagForm } from '../feature-flag-form'
 
 interface VariationRowProps {
@@ -17,13 +18,16 @@ function VariationRow({ form, index, onRemove }: VariationRowProps) {
       {/* field: Name */}
       <form.Field name={`variations[${index}].name`}>
         {(field) => (
-          <input
-            value={field.state.value}
-            onChange={(e) => field.handleChange(e.target.value)}
-            onBlur={field.handleBlur}
-            placeholder="Name"
-            className="rounded bg-gray-200 px-3 py-2 text-sm outline-none"
-          />
+          <div>
+            <input
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+              placeholder="Name"
+              className="w-full rounded bg-gray-200 px-3 py-2 text-sm outline-none"
+            />
+            <FieldError field={field} />
+          </div>
         )}
       </form.Field>
 
@@ -44,17 +48,20 @@ function VariationRow({ form, index, onRemove }: VariationRowProps) {
                   <option value="false">false</option>
                 </select>
               ) : (
-                <input
-                  // number = คีย์บอร์ดตัวเลข + เบราว์เซอร์กันตัวอักษรให้
-                  type={flagType === 'number' ? 'number' : 'text'}
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  placeholder={
-                    flagType === 'json' ? '{ "key": "value" }' : 'Flag Value'
-                  }
-                  className="rounded bg-gray-200 px-3 py-2 text-sm outline-none"
-                />
+                <div>
+                  <input
+                    // number = คีย์บอร์ดตัวเลข + เบราว์เซอร์กันตัวอักษรให้
+                    type={flagType === 'number' ? 'number' : 'text'}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                    placeholder={
+                      flagType === 'json' ? '{ "key": "value" }' : 'Flag Value'
+                    }
+                    className="w-full rounded bg-gray-200 px-3 py-2 text-sm outline-none"
+                  />
+                  <FieldError field={field} />
+                </div>
               )
             }
           </form.Subscribe>

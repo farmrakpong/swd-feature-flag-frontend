@@ -1,3 +1,4 @@
+import FieldError from '../field-error'
 import type { FeatureFlagForm } from '../feature-flag-form'
 
 interface MetadataRowProps {
@@ -14,14 +15,17 @@ function MetadataRow({ form, index, onRemove }: MetadataRowProps) {
       {/* ช่องซ้าย: key ที่จะไปเป็นชื่อ property ใน JSON */}
       <form.Field name={`metadata[${index}].key`}>
         {(field) => (
-          <div className="rounded-md bg-gray-200 px-3 pt-1.5 pb-2">
-            <label className="block text-[11px] text-gray-500">Key</label>
-            <input
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              onBlur={field.handleBlur}
-              className="w-full bg-transparent text-sm outline-none"
-            />
+          <div>
+            <div className="rounded-md bg-gray-200 px-3 pt-1.5 pb-2">
+              <label className="block text-[11px] text-gray-500">Key</label>
+              <input
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                className="w-full bg-transparent text-sm outline-none"
+              />
+            </div>
+            <FieldError field={field} />
           </div>
         )}
       </form.Field>
