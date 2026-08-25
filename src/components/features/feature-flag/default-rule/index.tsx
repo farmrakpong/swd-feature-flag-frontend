@@ -2,17 +2,19 @@ import type { FeatureFlagForm } from '../feature-flag-form'
 
 interface DefaultRuleProps {
   form: FeatureFlagForm
+  // ตำแหน่งของ flag ที่ default rule นี้อยู่
+  index: number
 }
 
 // ค่าใน <select> ที่ไม่ใช่ชื่อ variation ใช้บอกว่าเลือกโหมดแบ่ง %
 const PERCENTAGE_OPTION = '__percentage__'
 
 // variation ที่จะคืนเมื่อไม่เข้าเงื่อนไข targeting ข้อไหนเลย
-function DefaultRule({ form }: DefaultRuleProps) {
+function DefaultRule({ form, index }: DefaultRuleProps) {
   // อัปเดต % ของ variation ตัวเดียว โดยไม่ทับตัวอื่น
   const setPercentage = (name: string, percent: number) => {
-    form.setFieldValue('defaultRule.percentage', {
-      ...form.getFieldValue('defaultRule.percentage'),
+    form.setFieldValue(`flags[${index}].defaultRule.percentage`, {
+      ...form.getFieldValue(`flags[${index}].defaultRule.percentage`),
       [name]: percent,
     })
   }
@@ -23,15 +25,15 @@ function DefaultRule({ form }: DefaultRuleProps) {
 
       <div className="mt-3 rounded-md border border-teal-400 p-4">
         {/* ดึงชื่อ variation ล่าสุดมาทำ option และทำรายการ % */}
-        <form.Subscribe selector={(state) => state.values.variations}>
+        <form.Subscribe selector={(state) => state.values.flags[index]?.variations ?? []}>
           {(variations) => (
-            <form.Field name="defaultRule.kind">
+            <form.Field name={`flags[${index}].defaultRule.kind`}>
               {(kindField) => (
                 <>
                   <div className="flex items-center gap-3">
                     <span className="text-sm">Serve</span>
 
-                    <form.Field name="defaultRule.variation">
+                    <form.Field name={`flags[${index}].defaultRule.variation`}>
                       {(variationField) => (
                         <select
                           value={
@@ -66,7 +68,7 @@ function DefaultRule({ form }: DefaultRuleProps) {
 
                   {/* โหมดแบ่ง % เท่านั้นที่มีส่วนนี้ */}
                   {kindField.state.value === 'percentage' && (
-                    <form.Field name="defaultRule.percentage">
+                    <form.Field name={`flags[${index}].defaultRule.percentage`}>
                       {(percentageField) => (
                         <div className="mt-3">
                           <p className="text-sm italic">

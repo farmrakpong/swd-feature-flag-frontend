@@ -6,9 +6,11 @@ import type { Variations as VariationItem } from '../types'
 
 interface VariationsProps {
   form: FeatureFlagForm
+  // ตำแหน่งของ flag ที่ variations ชุดนี้อยู่
+  index: number
 }
 
-function Variations({ form }: VariationsProps) {
+function Variations({ form, index }: VariationsProps) {
   const addNewValue = (field: AnyFieldApi) => {
     const list: Array<VariationItem> = field.state.value
     const maxId = list.length ? Math.max(...list.map((item) => item.id)) : 0
@@ -19,17 +21,18 @@ function Variations({ form }: VariationsProps) {
       <p className="text-2xl">Variations</p>
 
       {/* mode="array" = บอก form ว่า field นี้เป็น array มี pushValue / removeValue ให้ใช้ */}
-      <form.Field name="variations" mode="array">
+      <form.Field name={`flags[${index}].variations`} mode="array">
         {(field) => (
           <>
             {/* รายการ variation */}
             <div className="space-y-2 pt-3">
-              {field.state.value.map((item, index) => (
+              {field.state.value.map((item, rowIndex) => (
                 <VariationRow
                   key={item.id}
                   form={form}
-                  index={index}
-                  onRemove={() => field.removeValue(index)}
+                  flagIndex={index}
+                  index={rowIndex}
+                  onRemove={() => field.removeValue(rowIndex)}
                 />
               ))}
             </div>

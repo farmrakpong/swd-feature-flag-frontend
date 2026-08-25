@@ -54,7 +54,9 @@ const defaultRuleSchema = z.object({
   percentage: z.record(z.string(), z.number()),
 })
 
-export const featureFlagSchema = z.object({
+// 1 flag = 1 key นอกสุดของ JSON
+const flagSchema = z.object({
+  id: z.number(),
   name: z
     .string()
     .trim()
@@ -69,4 +71,9 @@ export const featureFlagSchema = z.object({
   targeting: z.array(targetingSchema),
   defaultRule: defaultRuleSchema,
   metadata: z.array(metadataSchema),
+})
+
+// ฟอร์มถือได้หลาย flag เลยห่อ flagSchema ไว้ในอาเรย์อีกที
+export const featureFlagSchema = z.object({
+  flags: z.array(flagSchema).min(1, 'ต้องมีอย่างน้อย 1 flag'),
 })

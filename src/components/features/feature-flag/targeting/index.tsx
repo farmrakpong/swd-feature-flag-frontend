@@ -6,9 +6,11 @@ import { useDragSort } from './use-drag-sort'
 
 interface TargetSpecificUsersProps {
   form: FeatureFlagForm
+  // ตำแหน่งของ flag ที่ rule ชุดนี้อยู่
+  index: number
 }
 
-function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
+function TargetSpecificUsers({ form, index }: TargetSpecificUsersProps) {
   // ตัวลากสลับลำดับของ array targeting
   const dragItem = useDragSort()
 
@@ -17,7 +19,7 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
         const maxId = list.length ? Math.max(...list.map((item) => item.id)) : 0
 
         // ตั้งต้นให้ serve variation ตัวแรกไว้ก่อน (เหมือน GoFeatureFlag)
-        const firstVariation = form.getFieldValue('variations')[0]
+        const firstVariation = form.getFieldValue(`flags[${index}].variations`)[0]
 
         field.pushValue({
           variation: firstVariation,
@@ -35,16 +37,17 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
   return (
     <div className="pt-4">
       <p className="text-2xl">Target specific users</p>
-         <form.Field name="targeting" mode="array">
-          {(field) => ( 
+         <form.Field name={`flags[${index}].targeting`} mode="array">
+          {(field) => (
             <>
-                {field.state.value.map((rule, index) => (
+                {field.state.value.map((rule, ruleIndex) => (
                    <RuleCard
                      key={rule.id}
                      form={form}
-                     index={index}
-                     onRemove={() => field.removeValue(index)}
-                     drag={dragItem(field, index)}
+                     flagIndex={index}
+                     index={ruleIndex}
+                     onRemove={() => field.removeValue(ruleIndex)}
+                     drag={dragItem(field, ruleIndex)}
                    />
                 ))}
                 <div className="mt-3 grid size-8 place-items-center rounded-full bg-teal-400 text-white" onClick={()=>addTargetSpecificUsersValue(field)}>

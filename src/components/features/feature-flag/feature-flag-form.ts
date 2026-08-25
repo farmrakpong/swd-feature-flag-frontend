@@ -27,6 +27,8 @@ export function defaultValueForType(type: FlagType): string {
 }
 
 export interface FeatureFlagValues {
+  // id ไม่ได้ลง JSON มีไว้ทำ key ตอน map เฉยๆ เหมือน variations
+  id: number
   // ชื่อ flag = key นอกสุดของ JSON เช่น "my-first-flag"
   name: string
   type: FlagType
@@ -39,8 +41,9 @@ export interface FeatureFlagValues {
   metadata:Array<Metadata>
 }
 
-// ค่าเริ่มต้นของฟอร์มทั้งก้อน 
+// ค่าเริ่มต้นของ flag 1 ตัว
 export const defaultFeatureFlagValues: FeatureFlagValues = {
+  id: 1,
   name: 'my-first-flag',
   type: 'boolean',
   version: '1',
@@ -55,9 +58,34 @@ export const defaultFeatureFlagValues: FeatureFlagValues = {
   metadata:[]
 }
 
+// flag ที่เพิ่งกดเพิ่ม = ของตั้งต้นเปล่าๆ เปลี่ยนแค่ id กับชื่อ
+// ต้อง copy array/object ข้างในด้วย ไม่งั้นทุก flag จะแก้ค่าเดียวกันหมด
+export function createFlag(id: number): FeatureFlagValues {
+  return {
+    ...defaultFeatureFlagValues,
+    id,
+    // ตัวแรก id 1 เป็น my-first-flag ตัวถัดไปเลยเริ่มนับที่ new-flag-1
+    name: `new-flag-${id - 1}`,
+    variations: defaultFeatureFlagValues.variations.map((item) => ({ ...item })),
+    targeting: [],
+    defaultRule: { ...defaultFeatureFlagValues.defaultRule, percentage: {} },
+    metadata: [],
+  }
+}
+
+// ฟอร์มเก็บได้หลาย flag JSON ข้างขวาถึงมีหลาย key นอกสุด
+export interface FeatureFlagFormValues {
+  flags: Array<FeatureFlagValues>
+}
+
+// ค่าเริ่มต้นของฟอร์มทั้งก้อน
+export const defaultFormValues: FeatureFlagFormValues = {
+  flags: [defaultFeatureFlagValues],
+}
+
 export function useFeatureFlagForm() {
   return useForm({
-    defaultValues: defaultFeatureFlagValues,
+    defaultValues: defaultFormValues,
     // เช็คทุกครั้งที่ค่าเปลี่ยน error จะเด้งใต้ช่องที่ผิดทันที
     validators: {
       onChange: featureFlagSchema,

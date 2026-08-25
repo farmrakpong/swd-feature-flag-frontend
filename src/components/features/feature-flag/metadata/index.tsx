@@ -6,9 +6,11 @@ import type { Metadata as MetadataItem } from '../types'
 
 interface MetadataProps {
   form: FeatureFlagForm
+  // ตำแหน่งของ flag ที่ metadata ชุดนี้อยู่
+  index: number
 }
 
-function Metadata({ form }: MetadataProps) {
+function Metadata({ form, index }: MetadataProps) {
   const addNewValue = (field: AnyFieldApi) => {
     const list: Array<MetadataItem> = field.state.value
     const maxId = list.length ? Math.max(...list.map((item) => item.id)) : 0
@@ -19,17 +21,18 @@ function Metadata({ form }: MetadataProps) {
     <div className="pt-4">
       <p className="text-2xl">Metadata</p>
 
-      <form.Field name="metadata" mode="array">
+      <form.Field name={`flags[${index}].metadata`} mode="array">
         {(field) => (
           <>
             {/* รายการ key/value */}
             <div className="space-y-2 pt-3">
-              {field.state.value.map((item, index) => (
+              {field.state.value.map((item, rowIndex) => (
                 <MetadataRow
                   key={item.id}
                   form={form}
-                  index={index}
-                  onRemove={() => field.removeValue(index)}
+                  flagIndex={index}
+                  index={rowIndex}
+                  onRemove={() => field.removeValue(rowIndex)}
                 />
               ))}
             </div>

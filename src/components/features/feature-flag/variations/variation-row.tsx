@@ -3,20 +3,22 @@ import type { FeatureFlagForm } from '../feature-flag-form'
 
 interface VariationRowProps {
   form: FeatureFlagForm
+  // ตำแหน่งของ flag ที่แถวนี้อยู่
+  flagIndex: number
   // ตำแหน่งของแถวใน array variations เอาไว้ประกอบเป็นชื่อ field
   index: number
   onRemove: () => void
 }
 
 // 1 row = [dot] [Name] [Flag Value] [ปุ่มลบ]
-function VariationRow({ form, index, onRemove }: VariationRowProps) {
+function VariationRow({ form, flagIndex, index, onRemove }: VariationRowProps) {
   return (
     <div className="grid grid-cols-[auto_1fr_1fr_auto] items-center gap-3">
       {/* dot: จุดสีประจำ variation */}
       <div className="size-2.5 rounded-full bg-gray-400" />
 
       {/* field: Name */}
-      <form.Field name={`variations[${index}].name`}>
+      <form.Field name={`flags[${flagIndex}].variations[${index}].name`}>
         {(field) => (
           <div>
             <input
@@ -32,9 +34,11 @@ function VariationRow({ form, index, onRemove }: VariationRowProps) {
       </form.Field>
 
       {/* field: Flag Value - หน้าตาเปลี่ยนตาม flag type ที่เลือกไว้ด้านบน */}
-      <form.Field name={`variations[${index}].value`}>
+      <form.Field name={`flags[${flagIndex}].variations[${index}].value`}>
         {(field) => (
-          <form.Subscribe selector={(state) => state.values.type}>
+          <form.Subscribe
+            selector={(state) => state.values.flags[flagIndex]?.type}
+          >
             {(flagType) =>
               flagType === 'boolean' ? (
                 // boolean มีได้แค่ 2 ค่า เลยใช้ dropdown ปิดโอกาสพิมพ์ผิด
