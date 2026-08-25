@@ -6,6 +6,7 @@ export interface Variations {
 
 export interface Targeting{
     id:number
+    name:string
     query:string
     variation?:Variations
     percentage?:Variations

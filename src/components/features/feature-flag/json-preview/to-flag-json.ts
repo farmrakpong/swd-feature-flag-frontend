@@ -54,8 +54,17 @@ export function toFlagJson(values: FeatureFlagValues) {
       ...(values.disable ? { disable: true } : {}),
       ...(values.trackEvents ? { trackEvents: true } : {}),
       ...(values.version.trim() ? { version: values.version.trim() } : {}),
-      // TODO: ต่อกับฟอร์ม targeting เมื่อขึ้นโครง rule เสร็จ
-      targeting: [],
+      // ไม่มี rule เลยก็ไม่ต้องมี key นี้ใน JSON
+      // ฟอร์มเก็บ variation เป็น object ทั้งก้อน แต่ JSON ใช้แค่ "ชื่อ"
+      ...(values.targeting.length
+        ? {
+            targeting: values.targeting.map((rule) => ({
+              name: rule.name,
+              query: rule.query,
+              ...(rule.variation ? { variation: rule.variation.name } : {}),
+            })),
+          }
+        : {}),
       defaultRule: {
         variation: values.variations[0]?.name ?? '',
       },
