@@ -50,12 +50,29 @@ export interface Metadata{
     value: string
 }
 
-// serve ได้ 2 แบบ เลือกอย่างใดอย่างหนึ่ง
-// variation  -> "defaultRule": { "variation": "Variation_1" }
-// percentage -> "defaultRule": { "percentage": { "Variation_1": 1, "Variation_2": 0 } }
+// serve ได้ 3 แบบ เลือกอย่างใดอย่างหนึ่ง
+// variation   -> "defaultRule": { "variation": "Variation_1" }
+// percentage  -> "defaultRule": { "percentage": { "Variation_1": 1, "Variation_2": 0 } }
+// progressive -> "defaultRule": { "progressiveRollout": { "initial": {...}, "end": {...} } }
 export interface DefaultRule{
-    kind: 'variation' | 'percentage'
+    kind: 'variation' | 'percentage' | 'progressive'
     variation: string
     // key = ชื่อ variation, value = เปอร์เซ็นต์
     percentage: Record<string, number>
+    // progressive -> ไล่ % ขึ้นเองตามเวลาที่ตั้งไว้
+    progressive: ProgressiveRollout
+}
+
+// จุดเริ่ม/จุดจบของ progressive rollout
+// date เก็บตามที่ input type="datetime-local" ให้มา (2026-08-25T15:31)
+// ตอนแปลงเป็น JSON ค่อยยิงเป็น ISO
+export interface RolloutStep{
+    date:string
+    percentage:number
+    variation:string
+}
+
+export interface ProgressiveRollout{
+    initial:RolloutStep
+    end:RolloutStep
 }

@@ -48,11 +48,42 @@ const metadataSchema = z.object({
   value: z.string(),
 })
 
-const defaultRuleSchema = z.object({
-  kind: z.enum(['variation', 'percentage']),
+const rolloutStepSchema = z.object({
+  date: z.string(),
+  percentage: z.number().min(0, 'ต่ำสุด 0').max(100, 'สูงสุด 100'),
   variation: z.string(),
-  percentage: z.record(z.string(), z.number()),
 })
+
+const defaultRuleSchema = z
+  .object({
+    kind: z.enum(['variation', 'percentage', 'progressive']),
+    variation: z.string(),
+    percentage: z.record(z.string(), z.number()),
+    progressive: z.object({
+      initial: rolloutStepSchema,
+      end: rolloutStepSchema,
+    }),
+  })
+  // วันเวลาบังคับเฉพาะตอนเลือกโหมด progressive
+  // ถ้าใส่ min(1) ไว้ที่ตัว field เลย โหมดอื่นจะพลอยไม่ผ่านไปด้วย
+  .superRefine((rule, ctx) => {
+    if (rule.kind !== 'progressive') return
+
+    if (!rule.progressive.initial.date) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'ต้องเลือกวันเริ่ม',
+        path: ['progressive', 'initial', 'date'],
+      })
+    }
+    if (!rule.progressive.end.date) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'ต้องเลือกวันสิ้นสุด',
+        path: ['progressive', 'end', 'date'],
+      })
+    }
+  })
 
 // 1 flag = 1 key นอกสุดของ JSON
 const flagSchema = z.object({

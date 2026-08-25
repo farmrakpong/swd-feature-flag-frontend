@@ -4,6 +4,7 @@ import type {
   FlagType,
 } from '../feature-flag-form'
 import { buildQuery } from '../targeting/operator'
+import type { RolloutStep } from '../types'
 
 export type FlagValue = boolean | number | string | object
 
@@ -36,6 +37,17 @@ export function parseFlagValue(
 
     default:
       return raw
+  }
+}
+
+// ช่อง datetime-local เก็บเป็นเวลาเครื่อง (2026-08-25T15:31)
+// GoFeatureFlag รับเป็น ISO เลยต้องแปลงก่อน ยังไม่ได้เลือกวันก็ปล่อยว่างไว้
+function toRolloutStep(step: RolloutStep) {
+  const time = new Date(step.date)
+
+  return {
+    percentage: step.percentage,
+    date: step.date && !Number.isNaN(time.getTime()) ? time.toISOString() : '',
   }
 }
 
@@ -76,7 +88,14 @@ function flagToJson(flag: FeatureFlagValues) {
         }
       : {}),
     defaultRule:
-      flag.defaultRule.kind === 'percentage'
+      flag.defaultRule.kind === 'progressive'
+        ? {
+            progressiveRollout: {
+              initial: toRolloutStep(flag.defaultRule.progressive.initial),
+              end: toRolloutStep(flag.defaultRule.progressive.end),
+            },
+          }
+        : flag.defaultRule.kind === 'percentage'
         ? // ไล่ตาม variation ที่มีอยู่จริง ตัวไหนยังไม่กรอกนับเป็น 0
           {
             percentage: Object.fromEntries(

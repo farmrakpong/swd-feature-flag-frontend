@@ -1,3 +1,4 @@
+import ProgressiveRollout, { toDateTimeInput } from './progressive-rollout'
 import type { FeatureFlagForm } from '../feature-flag-form'
 
 interface DefaultRuleProps {
@@ -6,8 +7,12 @@ interface DefaultRuleProps {
   index: number
 }
 
-// ค่าใน <select> ที่ไม่ใช่ชื่อ variation ใช้บอกว่าเลือกโหมดแบ่ง %
+// ค่าใน <select> ที่ไม่ใช่ชื่อ variation ใช้บอกว่าเลือกโหมดไหน
 const PERCENTAGE_OPTION = '__percentage__'
+const PROGRESSIVE_OPTION = '__progressive__'
+
+// ช่วงเวลาตั้งต้นตอนเพิ่งเลือก progressive
+const DEFAULT_RAMP_DAYS = 10
 
 // variation ที่จะคืนเมื่อไม่เข้าเงื่อนไข targeting ข้อไหนเลย
 function DefaultRule({ form, index }: DefaultRuleProps) {
@@ -17,6 +22,23 @@ function DefaultRule({ form, index }: DefaultRuleProps) {
       ...form.getFieldValue(`flags[${index}].defaultRule.percentage`),
       [name]: percent,
     })
+  }
+
+  // ค่าตั้งต้นของ progressive เพิ่งมาเติมตอนนี้ ไม่ได้ใส่ไว้ตั้งแต่แรก
+  // เพราะ new Date() ตอน SSR จะได้คนละค่ากับฝั่ง browser
+  const fillRolloutDates = () => {
+    const start = new Date()
+    const end = new Date(start)
+    end.setDate(end.getDate() + DEFAULT_RAMP_DAYS)
+
+    const rolloutPath = `flags[${index}].defaultRule.progressive` as const
+    // ถ้าเคยกรอกไว้แล้วก็ไม่ต้องไปทับของเดิม
+    if (!form.getFieldValue(`${rolloutPath}.initial.date`)) {
+      form.setFieldValue(`${rolloutPath}.initial.date`, toDateTimeInput(start))
+    }
+    if (!form.getFieldValue(`${rolloutPath}.end.date`)) {
+      form.setFieldValue(`${rolloutPath}.end.date`, toDateTimeInput(end))
+    }
   }
 
   return (
@@ -39,11 +61,18 @@ function DefaultRule({ form, index }: DefaultRuleProps) {
                           value={
                             kindField.state.value === 'percentage'
                               ? PERCENTAGE_OPTION
-                              : variationField.state.value
+                              : kindField.state.value === 'progressive'
+                                ? PROGRESSIVE_OPTION
+                                : variationField.state.value
                           }
                           onChange={(e) => {
                             if (e.target.value === PERCENTAGE_OPTION) {
                               kindField.handleChange('percentage')
+                              return
+                            }
+                            if (e.target.value === PROGRESSIVE_OPTION) {
+                              kindField.handleChange('progressive')
+                              fillRolloutDates()
                               return
                             }
                             kindField.handleChange('variation')
@@ -60,6 +89,9 @@ function DefaultRule({ form, index }: DefaultRuleProps) {
                             ))}
                           <option value={PERCENTAGE_OPTION}>
                             a percentage rollout
+                          </option>
+                          <option value={PROGRESSIVE_OPTION}>
+                            a progressive rollout
                           </option>
                         </select>
                       )}
@@ -138,6 +170,15 @@ function DefaultRule({ form, index }: DefaultRuleProps) {
                         </div>
                       )}
                     </form.Field>
+                  )}
+
+                  {/* โหมดไล่ % ตามเวลา */}
+                  {kindField.state.value === 'progressive' && (
+                    <ProgressiveRollout
+                      form={form}
+                      index={index}
+                      variations={variations}
+                    />
                   )}
                 </>
               )}

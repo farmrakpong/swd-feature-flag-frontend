@@ -54,7 +54,17 @@ export const defaultFeatureFlagValues: FeatureFlagValues = {
     { id: 2, name: 'Variation_2', value: 'false' },
   ],
   targeting:[],
-  defaultRule:{ kind: 'variation', variation: 'Variation_1', percentage: {} },
+  defaultRule:{
+    kind: 'variation',
+    variation: 'Variation_1',
+    percentage: {},
+    // ปล่อยวันที่ว่างไว้ก่อน ค่อยเติมตอนผู้ใช้เลือกโหมดนี้
+    // ถ้าใส่ new Date() ตรงนี้ ค่าฝั่ง server กับ browser จะคนละอันตอน SSR
+    progressive: {
+      initial: { date: '', percentage: 0, variation: 'Variation_1' },
+      end: { date: '', percentage: 100, variation: 'Variation_1' },
+    },
+  },
   metadata:[]
 }
 
@@ -68,7 +78,14 @@ export function createFlag(id: number): FeatureFlagValues {
     name: `new-flag-${id - 1}`,
     variations: defaultFeatureFlagValues.variations.map((item) => ({ ...item })),
     targeting: [],
-    defaultRule: { ...defaultFeatureFlagValues.defaultRule, percentage: {} },
+    defaultRule: {
+      ...defaultFeatureFlagValues.defaultRule,
+      percentage: {},
+      progressive: {
+        initial: { ...defaultFeatureFlagValues.defaultRule.progressive.initial },
+        end: { ...defaultFeatureFlagValues.defaultRule.progressive.end },
+      },
+    },
     metadata: [],
   }
 }
