@@ -1,5 +1,6 @@
 import NodeList from './node-list'
 import FieldError from '../field-error'
+import type { DragSortItem } from './use-drag-sort'
 import type { FeatureFlagForm } from '../feature-flag-form'
 
 interface RuleCardProps {
@@ -7,16 +8,32 @@ interface RuleCardProps {
   // ตำแหน่งของ rule ใน array targeting เอาไว้ประกอบเป็นชื่อ field
   index: number
   onRemove: () => void
+  // ตัวจัดการลากสลับลำดับ rule
+  drag: DragSortItem
 }
 
+const dragHandle =
+  'fa-solid fa-grip-vertical cursor-grab select-none text-gray-400 active:cursor-grabbing'
 const fieldBox = 'rounded-md bg-gray-200 px-3 pt-1.5 pb-2'
 const fieldLabel = 'block text-[11px] text-gray-500'
 
 // 1 การ์ด = [Rule name] + [กล่องเงื่อนไข] + [Serve] และปุ่มลบอยู่นอกการ์ดด้านขวา
-function RuleCard({ form, index, onRemove }: RuleCardProps) {
+function RuleCard({ form, index, onRemove, drag }: RuleCardProps) {
   return (
-    <div className="flex items-start gap-3 pt-3">
-      <div className="flex-1 rounded-md border border-teal-400 p-4">
+    <div
+      {...drag.container}
+      className={`flex items-start gap-3 pt-3 ${
+        drag.isDragging ? 'opacity-40' : ''
+      }`}
+    >
+      {/* จุดจับลาก ลำดับ rule มีผลกับลำดับใน JSON เลยต้องสลับได้ */}
+      <i {...drag.handle} className={`${dragHandle} mt-7`} />
+
+      <div
+        className={`flex-1 rounded-md border p-4 ${
+          drag.isOver ? 'border-teal-400 ring-2 ring-teal-400' : 'border-teal-400'
+        }`}
+      >
         {/* field: Rule name */}
         <form.Field name={`targeting[${index}].name`}>
           {(field) => (
@@ -80,7 +97,7 @@ function RuleCard({ form, index, onRemove }: RuleCardProps) {
       <button
         type="button"
         onClick={onRemove}
-        className="mt-4 grid size-8 shrink-0 place-items-center rounded-full bg-teal-400 text-white"
+        className="mt-7 grid size-8 shrink-0 place-items-center rounded-full bg-teal-400 text-white"
       >
         <i className="fa-solid fa-xmark" />
       </button>

@@ -2,12 +2,15 @@ import type { AnyFieldApi } from '@tanstack/react-form'
 import type { FeatureFlagForm } from '../feature-flag-form'
 import type { Targeting } from '../types'
 import RuleCard from './rule-card'
+import { useDragSort } from './use-drag-sort'
 
 interface TargetSpecificUsersProps {
   form: FeatureFlagForm
 }
 
 function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
+  // ตัวลากสลับลำดับของ array targeting
+  const dragItem = useDragSort()
 
   const addTargetSpecificUsersValue = (field: AnyFieldApi)=>{
         const list: Array<Targeting> = field.state.value
@@ -41,6 +44,7 @@ function TargetSpecificUsers({ form }: TargetSpecificUsersProps) {
                      form={form}
                      index={index}
                      onRemove={() => field.removeValue(index)}
+                     drag={dragItem(field, index)}
                    />
                 ))}
                 <div className="mt-3 grid size-8 place-items-center rounded-full bg-teal-400 text-white" onClick={()=>addTargetSpecificUsersValue(field)}>

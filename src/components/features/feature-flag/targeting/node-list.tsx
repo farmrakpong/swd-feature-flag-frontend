@@ -1,6 +1,7 @@
 import ConditionRow from './condition-row'
 import GroupBox from './group-box'
 import { dynamicField } from './dynamic-field'
+import { useDragSort } from './use-drag-sort'
 import type { AnyFieldApi } from '@tanstack/react-form'
 import type { FeatureFlagForm } from '../feature-flag-form'
 import type { RuleNode } from '../types'
@@ -31,6 +32,8 @@ function NodeList({
   onRemoveGroup,
 }: NodeListProps) {
   const Field = dynamicField(form)
+  // แต่ละชั้นมีตัวลากของตัวเอง เลยลากสลับได้เฉพาะในชั้นเดียวกัน
+  const dragItem = useDragSort()
 
   const addCondition = (field: AnyFieldApi) => {
     field.pushValue({
@@ -111,6 +114,7 @@ function NodeList({
                   form={form}
                   path={`${arrayPath}[${nodeIndex}]`}
                   onRemove={() => field.removeValue(nodeIndex)}
+                  drag={dragItem(field, nodeIndex)}
                 />
               ) : (
                 <ConditionRow
@@ -118,6 +122,7 @@ function NodeList({
                   form={form}
                   path={`${arrayPath}[${nodeIndex}]`}
                   onRemove={() => field.removeValue(nodeIndex)}
+                  drag={dragItem(field, nodeIndex)}
                 />
               ),
             )}
