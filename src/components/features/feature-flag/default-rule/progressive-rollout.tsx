@@ -1,4 +1,5 @@
 import FieldError from '../field-error'
+import { clampPercent, syncPercentInput } from './percent'
 import type { FeatureFlagForm } from '../feature-flag-form'
 import type { Variations } from '../types'
 
@@ -81,7 +82,11 @@ function ProgressiveRollout({
               min={0}
               max={100}
               value={field.state.value}
-              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onChange={(e) => {
+                const percent = clampPercent(e.target.value)
+                syncPercentInput(e.currentTarget, percent)
+                field.handleChange(percent)
+              }}
               onBlur={field.handleBlur}
               className={`${inputBox} w-20`}
             />

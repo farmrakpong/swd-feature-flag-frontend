@@ -1,4 +1,5 @@
 import ProgressiveRollout, { toDateTimeInput } from './progressive-rollout'
+import { clampPercent, syncPercentInput, totalPercent } from './percent'
 import type { FeatureFlagForm } from '../feature-flag-form'
 
 interface DefaultRuleProps {
@@ -124,12 +125,13 @@ function DefaultRule({ form, index }: DefaultRuleProps) {
                                     min={0}
                                     max={100}
                                     value={percentageField.state.value[item.name] ?? 0}
-                                    onChange={(e) =>
-                                      setPercentage(
-                                        item.name,
-                                        Number(e.target.value),
+                                    onChange={(e) => {
+                                      const percent = clampPercent(
+                                        e.target.value,
                                       )
-                                    }
+                                      syncPercentInput(e.currentTarget, percent)
+                                      setPercentage(item.name, percent)
+                                    }}
                                     className="w-20 rounded bg-gray-200 px-2 py-1 text-sm outline-none"
                                   />
                                   <span className="text-sm">%</span>
@@ -139,30 +141,26 @@ function DefaultRule({ form, index }: DefaultRuleProps) {
                               ))}
                           </ul>
 
-                          {/* แถบเลื่อนคุม % ของ variation ตัวแรก */}
+                          {/* แถบสรุปว่าตอนนี้ทุกช่องรวมกันได้กี่ % ลากไม่ได้ */}
                           {variations[0] && (
                             <div className="mt-4 flex items-center gap-3">
                               <input
                                 type="range"
                                 min={0}
                                 max={100}
-                                value={
-                                  percentageField.state.value[
-                                    variations[0].name
-                                  ] ?? 0
-                                }
-                                onChange={(e) =>
-                                  setPercentage(
-                                    variations[0].name,
-                                    Number(e.target.value),
-                                  )
-                                }
-                                className="flex-1"
+                                value={Math.min(
+                                  100,
+                                  totalPercent(percentageField.state.value, variations),
+                                )}
+                                readOnly
+                                tabIndex={-1}
+                                className="pointer-events-none flex-1"
                               />
                               <span className="text-xs">
-                                {percentageField.state.value[
-                                  variations[0].name
-                                ] ?? 0}
+                                {totalPercent(
+                                  percentageField.state.value,
+                                  variations,
+                                )}
                                 %
                               </span>
                             </div>
