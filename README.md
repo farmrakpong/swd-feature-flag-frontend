@@ -54,10 +54,6 @@ pnpm dev
 - `pnpm dev`: เริ่มต้น Development Server ที่ Port 3000
 - `pnpm build`: บิวด์โปรเจกต์สำหรับ Production
 - `pnpm preview`: จำลอง Production environment หลังจาก Build
-- `pnpm test`: รัน Unit Tests ด้วย Vitest
-- `pnpm format`: จัด Format โค้ดของคุณด้วย Prettier
-- `pnpm lint`: ตรวจสอบความถูกต้องของโค้ดด้วย ESLint
-- `pnpm check`: จัด Format โค้ดและแก้ไข Lint รวดเดียว
 
 ## 🎯 กฎและกติกา (Rules & Guidelines)
 
